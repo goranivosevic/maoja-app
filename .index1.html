@@ -4,15 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Vue Autocomplete</title>
     <link rel="stylesheet" href="main.css">
-    <script src="https://unpkg.com/vue"></script>  
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    
 </head>
 <body>
+       
+        
+        <script id="autocomplete-tpl" type="template/x-template">
+          <div class="autocomplete">
+            <p class="control icon-right">
+              <input type="text" class="input-dropdown" placeholder="" @input="onInput($event.target.value)" @blur="isOpened = false" @keydown.enter="select" @keydown.down="onDown" @keydown.up="onUp" @keyup.esc="isOpen = false" ref="dropdown" v-model="search" />
+              <i class="chevron bottom" @click="toggle" :class="{'chevron-active' : isOpened == true, 'chevron-inactive' : isOpened == false }"></i>
+            </p>
+            <transition name="fade" mode="in-out">
+              <ul class="options-list" v-show="isOpened">
+                <li v-for="(option, i) in filteredItems" @mouseenter="selected = i" @mousedown="select" :class="{'selected': i === selected}">
+                  {{ option.name }}
+                  <slot name="item" :title="option.name" :thumbnail="option.thumbnail">
+                </li>
+              </ul>
+            </transition>
+          </div>
+        </script>
+        
         <div id="app">
-                {{ message }}
-              </div>
-  
+          <autocomplete-dropdown :options="options" @select-item="onOptionSelect">
+        
+            <template slot="item" scope="option">
+              <span>
+                <img :src="option.thumbnail">
+              </span>
+            </template>
+        
+          </autocomplete-dropdown>
+        </div>
 <script src="main.js"></script>
 </body>
 </html>
